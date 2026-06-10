@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+ <head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>중국 자연 탐험</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Yeon+Sung&display=swap" rel="stylesheet">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>중국 자연 탐험</title>
+
+<style>
+
+body{
+
+    margin:0;
+
+    font-family :sans-serif;
+
+    background:#f5f5f5;
+}
+
+.region-icon{
+
+    cursor:pointer;
+
+    transition:
+        transform 0.25s ease,
+        filter 0.25s ease;
+
+    transform-box:fill-box;
+    transform-origin:center;
+}
+
+.region-icon:hover{
+
+    transform:scale(1.15);
+
+    filter:
+        drop-shadow(0 0 5px rgb(255, 255, 255))
+        drop-shadow(0 0 10px rgb(255, 255, 255));
+}
+
+.hidden{
+    display: none;
+}
+
+.map-container{
+
+    position:relative;
+
+    width:100vw;
+
+    height:100vh;
+
+    overflow:hidden;
+}
+
+.map-image{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+}
+
+.region-btn{
+
+    position:absolute;
+
+    background:none;
+
+    border:none;
+
+    padding:0;
+
+    cursor:pointer;
+}
+
+.icon-img{
+
+    width:250px;
+
+    transition:0.3s;
+}
+
+.icon-img:hover{
+
+    transform:scale(1.1);
+    filter: drop-shadow(0 0 12px white);
+}
+
+.overlay{
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.5);
+
+    display:none;
+
+    z-index:999;
+}
+
+.popup{
+
+    position:fixed;
+
+    top:50%;
+    left:50%;
+
+    transform:translate(-50%, -50%);
+
+    max-width:100vh;
+
+    max-height:70vh;
+
+    overflow: auto;
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:20px;
+
+    box-shadow:0 0 25px rgba(0,0,0,0.3);
+
+    display:none;
+
+    z-index:1000;
+
+    font-size:clamp(12px, 1.5vw, 18px);
+}
+
+.close-btn{
+
+    margin-top:20px;
+
+    padding:10px 18px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:black;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:16px;
+}
+
+.info-section{
+
+    display:flex;
+
+    gap:25px;
+
+    align-items:center;
+
+    margin-top:20px;
+}
+
+
+.info-text{
+
+    flex:1;
+
+    line-height:1.8;
+
+    font-size:18px;
+}
+
+.carousel{
+
+    position:relative;
+
+    width:80vh;
+
+    height: 40vh;
+
+    overflow:hidden;
+
+    border-radius:15px;
+
+    margin-bottom:20px;
+}
+
+.carousel img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+}
+
+.carousel-btn{
+
+    position:absolute;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:45px;
+
+    height:45px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:rgba(0,0,0,0.5);
+
+    color:white;
+
+    cursor:pointer;
+}
+
+.left{
+
+    left:10px;
+}
+
+.right{
+
+    right:10px;
+}
+
+.page-btn{
+
+    width:50px;
+
+    height:50px;
+
+    border:none;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    font-size:22px;
+}
+
+.info-section{
+
+    display:flex;
+
+    gap:20px;
+
+    align-items:flex-start;
+}
+
+.basic-info{
+
+    text-align: left;
+    flex:1;
+    font-size: 25px;
+    font-weight: bold;
+    color: #4b241fb9;
+    line-height:1.6;
+}
+
+body{
+    margin:0;
+    background:#4b241fb9;
+    font-family:'Gowun Dodum', cursive;
+}
+
+.popup-title{
+
+    margin-top: 0;
+
+    text-align:center;
+
+    font-size:70px;
+
+    margin-bottom:20px;
+
+    color: #4b241fd3;
+}
+
+.popup-text{
+    flex:1;
+    font-size: 25px;
+    font-weight: bold;
+    color: #4b241fb9;
+    line-height:1.8;
+}
+
+.map-image{
+    animation: zoomInMap 1.5s ease-out forwards;
+}
+
+@keyframes zoomInMap{
+    from{
+        transform:scale(1) translateX(0) translateY(0);
+    }
+    to{
+        transform:scale(1.5) translateX(0px) translateY(-100px);
+    }
+}
+
+.start-fade{
+    opacity:0;
+    animation:fadeIn 1s ease forwards;
+    animation-delay:2s;
+}
+
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+    }
+
+    to{
+        opacity:1;
+    }
+}
+
+.fade-in{
+    animation:fadeIn 0.5s ease forwards;
+}
+
+.china-map{
+    width:100%;
+    height:auto;
+    display:block;
+}
+
+#popupMap{
+    width:40%;
+    aspect-ratio: 1/1;
+}
+
+@media (max-width:768px){
+
+    .popup{
+
+        width:70vw;
+
+        transform:translate(-50%, -50%) scale(0.5);
+
+        transform-origin:center center;
+    }
+
+}
+
+.result-image{
+
+    width:100%;
+
+    max-height:90vh;
+
+    object-fit:contain;
+
+    border-radius:15px;
+}
+
+</style>
+
+</head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+
+
+<body>
+    <div
+class="overlay"
+id="overlay">
+</div>
+
+<div class="map-container">
+
+<svg
+    id="chinaMap"
+    class="map-image"
+    viewBox="0 0 1586 992"
+>
+
+    <!-- 지도 -->
+
+    <image
+        href="images/china-maps.png"
+        width="1586"
+        height="992"
+    />
+
+        <image
+        id="dunhuangBtn"
+        class="region-icon start-fade"
+        href="images/dunhuang.png"
+        x="570"
+        y="290"
+        width="150"
+        height="150"
+        onclick="openRegion('dunhuang')"
+        />
+
+    <image
+        id="zhangyeBtn"
+        class="region-icon hidden"
+        href="images/zhangye.png"
+        x="700"
+        y="330"
+        width="150"
+        height="150"
+        onclick="openRegion('zhangye')"
+    />
+
+        <image
+        id="xiningBtn"
+        class="region-icon hidden"
+        href="images/xining.png"
+        x="700"
+        y="380"
+        width="150"
+        height="150"
+        onclick="openRegion('xining')"
+    />
+
+        <image
+        id="zhangjiajieBtn"
+        class="region-icon hidden"
+        href="images/zhangjiajie.png"
+        x="900"
+        y="550"
+        width="150"
+        height="150"
+        onclick="openRegion('zhangjiajie')"
+    />
+
+        <image
+        id="guilinBtn"
+        class="region-icon hidden"
+        href="images/guilin.png"
+        x="870"
+        y="650"
+        width="150"
+        height="150"
+        onclick="openRegion('guilin')"
+    />
+    
+        <image
+        id="hainanBtn"
+        class="region-icon hidden"
+        href="images/hainan.png"
+        x="865"
+        y="800"
+        width="150"
+        height="150"
+        onclick="openRegion('hainan')"
+    />
+
+        <image
+        id="kunmingBtn"
+        class="region-icon hidden"
+        href="images/kunming.png"
+        x="700"
+        y="650"
+        width="150"
+        height="150"
+        onclick="openRegion('kunming')"
+    />
+
+        <image
+        id="lijiangBtn"
+        class="region-icon hidden"
+        href="images/lijiang.png"
+        x="650"
+        y="600"
+        width="150"
+        height="150"
+        onclick="openRegion('lijiang')"
+    />
+
+    <image
+        id="resultBtn"
+        class="region-icon hidden"
+        href="images/re.png"
+        x="300"
+        y="250"
+        width="220"
+        height="220"
+        onclick="openResult()"
+    />
+</svg>
+
+</div>
+
+<div class="popup" id="regionPopup">
+
+    <div id="page1">
+
+        <h2 id="popupTitle" class="popup-title"></h2>
+
+        <h2 id="popupTitle"></h2>
+
+        <!-- 캐러셀 -->
+
+        <div class="carousel">
+
+            <img
+            id="carouselImage"
+            src="">
+
+            <button
+            class="carousel-btn left"
+            onclick="prevImage()">
+
+            ◀
+
+            </button>
+
+            <button
+            class="carousel-btn right"
+            onclick="nextImage()">
+
+            ▶
+
+            </button>
+
+        </div>
+
+        <!-- 지도 + 설명 -->
+
+        <div class="info-section">
+
+            <iframe id="popupMap"></iframe>
+
+            <div class="basic-info">
+
+                <p id="popupLocation"></p>
+
+                <p id="popupClimate"></p>
+
+                <p id="popupTerrain"></p>
+
+            </div>
+
+        </div>
+
+        <div style="text-align:right;">
+
+            <button
+            class="page-btn"
+            onclick="nextPage()">
+
+            ▶
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- 2페이지 -->
+
+    <div
+    id="page2"
+    class="hidden">
+
+    <h2 id="popupTitle2" class="popup-title"></h2>
+
+        <h2 id="popupTitle" class="popup-title"></h2>
+
+        <h2 id="popupTitle2" class="popup-title"></h2>
+
+        <div id="popupText2" class="popup-text"></div>
+
+        <div
+        style="
+        display:flex;
+        justify-content:space-between;
+        margin-top:20px;
+        ">
+
+            <button
+            class="page-btn"
+            onclick="prevPage()">
+
+            ◀
+
+            </button>
+
+            <button
+            class="close-btn"
+            onclick="closeRegion()">
+
+            탐험 완료
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div
+id="resultPopup"
+class="popup">
+
+    <h2>탐험 결과</h2>
+
+    <img
+    src="images/np.png"
+    class="result-image">
+
+    <button
+    class="close-btn"
+    onclick="closeResult()">
+
+    닫기
+
+    </button>
+
+</div>
+
+<script>
+
+const regions = {
+
+    dunhuang:{
+
+        title:"둔황시",
+
+        location:"중국 서북부 간쑤성, 실크로드의 요충지",
+
+        climate:"온대 건조기후로 인해 강수량이 매우 적음",
+
+        terrain:"고비사막과 오아시스가 분포",
+
+        text2:"둔황은 중국 서북부 간쑤성에 위치한 도시로, 강수량이 적고 바람이 강한 사막 기후가 특징이다. 이러한 지리적 환경 속에서 형성된 대표적인 자연경관이 명사산과 월아천이다. 명사산은 바람에 의해 모래가 오랜 시간 쌓여 만들어진 거대한 사구로, 모래가 움직일 때 울림소리가 난다고 하여 이러한 이름이 붙었다. 명사산 아래에는 초승달 모양의 오아시스인 월아천이 자리하고 있는데, 건조한 사막 한가운데에서도 오랜 세월 물이 마르지 않아 신비로운 경관을 만들어낸다. 월아천의 발원지는 돈황 남쪽에 솟아있는 곤륜산맥으로 눈 녹은 물이 지하로 흘러 비교적 저지대인 이곳에서 솟아나는 것이라고 한다. 명사산과 월아천은 둔황의 건조한 기후와 사막 지형이 만들어낸 대표적인 자연경관으로, 실크로드를 상징하는 명소로도 알려져 있다.",
+
+        map:"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3573394.5813197307!2d91.8519168988798!3d40.403653306254796!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x37eac14a4a737231%3A0x7461bfc0c6bfc872!2z7KSR6rWtIOqwhOyRpCDso7zst6jslYgg7IucIOuRlO2ZqSDsi5w!5e0!3m2!1sko!2skr!4v1780908369895!5m2!1sko!2skr",
+        
+        images:[
+            "images/dh1.jpg",
+            "images/dh2.jpg",
+            "images/dh3.jpg",
+        ],
+
+        next:"zhangyeBtn"
+    },
+
+    zhangye:{
+
+        title:"장예시",
+
+        location:"중국 서북부 간쑤성 중부",
+
+    climate:"건조한 대륙성 기후로 인해 일교차가 큼",
+
+    terrain:"고원과 사막, 단샤 지형이 발달",
+
+        text2:"중국 간쑤성에 위치한 장예는 중국 서북부의 건조한 고원 지대에 위치한 도시로, 검조한 기후와 거대한 산악, 사막 지형이 특징인 지역이다. 특히 이 지역은 해발이 높은 고원 지대와 건조한 환경의 영향을 받아 독특한 단샤 지형이 발달하였다. 대표적인 장예 단샤 지형은 오랜 시간 쌓인 붉은 사암층이 지각 변동으로 융기하고, 바람과 비에 침식되며 형성된 지형이다. 특히 건조한 환경과 큰 일교차는 화려한 색의 지층과 독특한 절벽·능선을 만드는 데 큰 영향을 주었다.",
+
+        map:"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3924434.632903239!2d98.20375489526808!3d38.52785940077081!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x37b45bcdc2b572ef%3A0x6e55cbf080250102!2z7KSR6rWtIOqwhOyRpCDsnqXsmIgg7Iuc!5e0!3m2!1sko!2skr!4v1780908396289!5m2!1sko!2skr",
+
+        
+        images:[
+            "images/zy1.jpg",
+            "images/zy2.jpg",
+            "images/zy3.jpg"
+        ],
+
+        next:"xiningBtn"
+    },
+
+    xining:{
+
+        title:"시닝시",
+
+        icon:"images/xining.png",
+        
+        location:"중국 서북부 칭하이성 동부",
+
+    climate:"고원기후로 인해 여름이 서늘하고 겨울이 추움",
+
+    terrain:"칭짱고원 북동부의 고원 지대",
+
+        text2:"동북부에 위치한 고원 도시로, 평균 해발고도가 높고 강수량이 적은 건조한 기후를 가지고 있다. 이러한 지리적 환경의 영향으로 주변에는 초원, 고원, 염호와 같은 독특한 자연경관이 발달하였다. 그중 대표적인 자연경관인 차카염호는 차이다무 분지에 형성된 거대한 소금 호수로, 오랜 시간 강한 햇빛과 증발 작용이 반복되며 호수 바닥에 소금이 두껍게 쌓여 만들어졌다. 또한 넓고 평평한 지형, 얕은 수심, 맑은 날씨가 어우러지면서 하늘과 구름이 호수에 그대로 비치는 독특한 풍경이 나타난다. 그래서 차카염호는 ‘하늘의 거울’이라고도 불리며, 시닝 지역의 고원 지형과 건조한 기후가 만들어낸 대표적인 자연경관으로 알려져 있다.",
+
+        map:"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2516710.628169175!2d99.89927704738949!3d36.824124842756376!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x364d815ca4086649%3A0xee9f96f799511ba4!2z7KSR6rWtIOy5re2VmOydtCDshLEg7Iuc64udIOyLnA!5e0!3m2!1sko!2skr!4v1780908427967!5m2!1sko!2skr",
+
+        
+        images:[
+            "images/xn1.jpg",
+            "images/xn2.jpg",
+            "images/xn3.jpg"
+        ],
+
+        next:"zhangjiajieBtn"
+    },
+
+    zhangjiajie:{
+
+        title:"장자제",
+
+        location:"중국 중남부 후난성 북서부",
+
+    climate:"아열대 몬순기후로 인해 강수량이 많음",
+
+    terrain:"사암 봉우리와 깊은 계곡이 발달",
+
+        text2:"장가계는 중국 후난성 북서부에 위치한 산악 지역으로, 독특한 기암괴석 지형으로 유명하다. 이 지역은 약 4억 년 전 바다 아래에 있던 석회암 지질층이 지각 변동으로 융기하며 형성되었다. 이후 오랜 시간 동안 빗물과 지하수에 의한 침식, 불균질 풍화 작용이 반복되면서 수천 개의 돌기둥 모양 봉우리와 기암괴석이 만들어졌다. 특히 수직으로 솟아 있는 봉우리들과 깊은 협곡, 자욱한 안개가 어우러져 신비로운 경관을 형성한다. 장가계의 자연경관은 지각 변동과 오랜 침식 작용이 만들어낸 대표적인 지형 사례이다.",
+
+        map:"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2002225.5725606992!2d109.46689472226865!3d29.26010176592579!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x369b062183b65599%3A0x61908b5d20c29056!2z7KSR6rWtIO2bhOuCnCDshLEg7J6l7J6Q7KCcIOyLnA!5e0!3m2!1sko!2skr!4v1780908452821!5m2!1sko!2skr",
+
+        
+        images:[
+            "images/zjj1.jpg",
+            "images/zjj2.jpg",
+            "images/zjj3.jpg"
+        ],
+
+        next:"guilinBtn"
+    },
+
+    guilin:{
+
+        title:"구이린",
+
+        location:"중국 남부 광시좡족자치구 북동부",
+
+    climate:"아열대 몬순기후로 인해 온난다습",
+
+    terrain:"카르스트 지형과 석회암 산지가 발달",
+
+        text2:"계림은 중국 광시성 동북부에 위치한 지역으로, 고온다습한 아열대 기후의 영향을 받아 연중 온화하고 강수량이 풍부하다. 이러한 기후 환경 속에서 빗물이 석회암을 오랜 시간 침식하며 독특한 카르스트 지형이 형성되었다. 계림은 과거 바다였던 지역이 지각 변동으로 융기하면서 수많은 봉우리와 기암괴석이 드러난 곳으로, 현재는 뾰족한 석회암 산들이 병풍처럼 펼쳐진 독특한 풍경으로 유명하다. 특히 이강(리장강)을 따라 상비산, 월량산과 같은 다양한 형태의 봉우리와 동굴 지형이 발달해 있으며, 산과 강이 어우러져 수묵화 같은 경관을 만들어낸다. 이러한 자연경관 덕분에 계림은 중국을 대표하는 카르스트 지형 관광지로 알려져 있다.",
+
+        map:"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3939911.7793963016!2d108.8928926110455!3d25.232268096082084!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x36a4f43675215133%3A0xff86c1191d704ae1!2z7KSR6rWtIOq0keyLnCDsoqHsobEg7J6Q7LmY6rWsIOq1rOydtOumsCDsi5w!5e0!3m2!1sko!2skr!4v1780908483910!5m2!1sko!2skr",
+
+        images:[
+
+            "images/gl1.jpg",
+            "images/gl2.jpg",
+            "images/gl3.jpg"
+        ],
+        
+        next:"hainanBtn"
+    },
+
+    hainan:{
+
+        title:"하이난",
+
+        location:"중국 최남단, 남중국해의 섬",
+
+    climate:"열대 몬순기후로 인해 연중 고온다습",
+
+    terrain:"해안 평야와 열대 산림, 화산지형",
+
+        text2:"하이난은 중국 최남단 남중국해에 위치한 중국 최대의 열대 섬으로, 제주도의 약 18배 크기를 가지고 있다. 북부는 아열대 기후, 남부는 열대기후의 영향을 받아 연중 따뜻한 날씨가 이어지며, 특히 겨울철에도 온화한 기후를 유지한다. 또한 동부와 산지에는 강수량이 많아 열대 식생과 숲이 발달하였고, 해안 지역에는 아름다운 해변과 해양 경관이 형성되었다. 이러한 지리적 특징 덕분에 하이난은 연중 해수욕과 해양 스포츠가 가능한 중국 대표 휴양지로 성장하였으며, ‘중국의 하와이’라고도 불린다. 이는 열대 섬이라는 지리적 환경이 관광 문화와 자연경관 형성에 큰 영향을 준 대표적인 사례이다.",
+
+        map:"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3444547.247405289!2d109.16539919074174!3d19.51874676399269!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314f03387538d0a5%3A0xb84913144116d0f6!2z7KSR6rWtIO2VmOydtOuCnCDshLE!5e0!3m2!1sko!2skr!4v1780908506607!5m2!1sko!2skr",
+
+        images:[
+
+            "images/hn1.jpg",
+            "images/hn2.jpg",
+            "images/hn3.jpg"
+        ],
+        
+        next:"kunmingBtn"
+    },
+
+    kunming:{
+
+        title:"쿤밍",
+
+        x:730,
+        y:530,
+
+         location:"중국 서남부 윈난성 중부",
+
+    climate:"아열대 고원기후로 인해 연중 온화",
+
+    terrain:"고원과 산지가 넓게 분포",
+
+        text1:"쓰촨은 중국 서남부에 위치하며 분지 지형이 발달하였다.",
+
+        text2:"쿤밍은 중국 남서부 운귀고원에 위치한 도시로, 평균 해발 약 1,900m의 고원 지형 위에 자리하고 있다. 높은 해발고도에도 불구하고 위도가 낮고 지형의 영향을 받아 연중 온화한 기후가 나타나며, '춘성(春城, 봄의 도시)'이라는 별칭으로 불린다. 또한 주변에는 넓은 고원 호수인 전지(滇池)와 산지가 분포해 있어 풍부한 자연환경을 형성하고 있다. 고원 지형은 쿤밍의 온화한 기후와 다양한 생태환경을 만드는 데 중요한 역할을 하였으며, 덕분에 사계절 내내 꽃이 피는 아름다운 경관을 볼 수 있다. 쿤밍은 고원 지형과 온화한 기후가 자연환경과 도시의 특색을 형성한 대표적인 사례이다.",
+
+        map:"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2825833.3386967126!2d101.28860464245923!3d25.5244650741006!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x36d083c31227d3cb%3A0xccb1f3a4984f0a36!2z7KSR6rWtIOyciOuCnCDshLEg7L-k67CNIOyLnA!5e0!3m2!1sko!2skr!4v1780908528983!5m2!1sko!2skr",
+
+        images:[
+
+            "images/km1.jpg",
+            "images/km2.jpg",
+            "images/km3.jpg"
+        ],
+        
+        next:"lijiangBtn"
+    },
+
+    lijiang:{
+
+        title:"리장",
+
+        location:"중국 서남부 윈난성 북서부",
+
+    climate:"고원기후로 인해 일교차가 크고 건조함",
+
+    terrain:"고산지대와 계곡, 설산이 발달",
+
+        text2:"리장은 중국 윈난성 북서부의 고원 지대에 위치한 도시로, 해발 약 2,400m의 높은 고도와 산악 지형이 특징이다. 이 지역은 히말라야 산맥의 영향을 받은 고원 지형에 자리하고 있으며, 주변에는 만년설로 덮인 옥룡설산이 우뚝 솟아 있다. 높은 산지에서 흘러내린 풍부한 수자원은 하천과 계곡을 형성하여 아름다운 자연경관을 만들어냈다. 또한 고원 기후의 영향을 받아 연중 비교적 온화한 날씨를 유지하며, 산과 물이 조화를 이루는 독특한 풍경을 볼 수 있다. 리장의 자연경관은 고원 지형과 산악 환경이 만들어낸 대표적인 사례로 평가받는다.",
+
+        map:"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2902493.5288965004!2d99.22887549908711!3d26.89412120772067!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3720afe6400bd3e9%3A0xb8d458833d475da8!2z7KSR6rWtIOyciOuCnCDshLEg66as7J6lIOyLnA!5e0!3m2!1sko!2skr!4v1780908563062!5m2!1sko!2skr",
+
+        images:[
+
+            "images/lj1.jpg",
+            "images/lj2.jpg",
+            "images/lj3.jpg"
+        ],
+        
+        next:"resultBtn"
+    },
+}
+
+let currentRegion = "";
+
+let currentImage = 0;
+
+function openRegion(region){
+
+    currentRegion = region;
+
+    const data = regions[region];
+
+    currentImage = 0;
+
+    document.getElementById("carouselImage")
+    .src = data.images[0];
+
+    document.getElementById("popupTitle")
+    .innerText = data.title;
+
+    document.getElementById("popupTitle2")
+    .innerText = data.title;
+
+    document.getElementById("popupLocation")
+    .innerText = "위치: " + data.location;
+
+    document.getElementById("popupClimate")
+    .innerText = "기후: " + data.climate;
+
+    document.getElementById("popupTerrain")
+    .innerText = "지형: " + data.terrain;
+
+    document.getElementById("popupText2")
+    .innerText = data.text2;
+
+    document.getElementById("popupMap")
+    .src = data.map;
+
+    document.getElementById("overlay")
+    .style.display = "block";
+
+    document.getElementById("regionPopup")
+    .style.display = "block";
+}
+
+function closeRegion(){
+
+    document.getElementById("overlay")
+    .style.display = "none";
+
+    document.getElementById("regionPopup")
+    .style.display = "none";
+
+    const nextBtn =
+    regions[currentRegion].next;
+
+    console.log("currentRegion =", currentRegion);
+    console.log("nextBtn =", nextBtn);
+    console.log("button =", document.getElementById(nextBtn));
+
+    if(nextBtn){
+
+        document
+        .getElementById(nextBtn)
+        .classList.remove("hidden");
+
+        document.getElementById(nextBtn)
+        .classList.add("fade-in");
+    }
+
+    document.getElementById("page2")
+    .classList.add("hidden");
+
+    document.getElementById("page1")
+    .classList.remove("hidden");
+}
+
+function nextImage(){
+
+    const data =
+    regions[currentRegion];
+
+    currentImage++;
+
+    if(currentImage >= data.images.length){
+
+        currentImage = 0;
+    }
+
+    document.getElementById("carouselImage")
+    .src = data.images[currentImage];
+}
+
+function prevImage(){
+
+    const data =
+    regions[currentRegion];
+
+    currentImage--;
+
+    if(currentImage < 0){
+
+        currentImage =
+        data.images.length - 1;
+    }
+
+    document.getElementById("carouselImage")
+    .src = data.images[currentImage];
+}
+
+function nextPage(){
+
+    document.getElementById("page1")
+    .classList.add("hidden");
+
+    document.getElementById("page2")
+    .classList.remove("hidden");
+}
+
+function prevPage(){
+
+    document.getElementById("page2")
+    .classList.add("hidden");
+
+    document.getElementById("page1")
+    .classList.remove("hidden");
+}
+
+const svg = document.getElementById("chinaMap");
+
+function openResult(){
+
+    document.getElementById("overlay")
+    .style.display = "block";
+
+    document.getElementById("resultPopup")
+    .style.display = "block";
+}
+
+function closeResult(){
+
+    document.getElementById("overlay")
+    .style.display = "none";
+
+    document.getElementById("resultPopup")
+    .style.display = "none";
+}
+
+</script>
+
+</body>
+
+</html>
